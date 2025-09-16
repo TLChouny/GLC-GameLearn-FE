@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { User, LoginRequest, RegisterRequest, AuthResponse } from '../types';
@@ -29,6 +30,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
 
   const isAuthenticated = !!user && !!token;
+
+  // Normalize minimal auth user payload to full User shape
+  const mapAuthUserToUser = (authUser: AuthResponse['user']): User => {
+    return {
+      _id: authUser.id,
+      userName: authUser.userName,
+      email: authUser.email,
+      gender: 'male',
+      address: '',
+      role: authUser.role,
+      avatar: authUser.avatar,
+      userDescription: '',
+      points: authUser.points,
+      listFriend: [],
+      isVerified: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      stats: authUser.stats || {
+        gamesPlayed: 0,
+        gamesWon: 0,
+        totalScore: 0,
+        averageScore: 0,
+      },
+    };
+  };
 
   // Force re-render when user changes
   useEffect(() => {
@@ -85,28 +111,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const data = response.data as AuthResponse;
       
       // Create new user object to ensure reference change
-      const apiUser = data.user as any; // Type assertion for API response
-      const newUser: User = {
-        _id: apiUser._id || apiUser.id || '',
-        userName: apiUser.userName || '',
-        email: apiUser.email || '',
-        gender: apiUser.gender || 'male',
-        address: apiUser.address || '',
-        role: apiUser.role || 'student',
-        avatar: apiUser.avatar,
-        userDescription: apiUser.userDescription,
-        points: apiUser.points || 0,
-        listFriend: apiUser.listFriend || [],
-        isVerified: apiUser.isVerified || false,
-        createdAt: apiUser.createdAt || new Date().toISOString(),
-        updatedAt: apiUser.updatedAt || new Date().toISOString(),
-        stats: apiUser.stats || {
-          gamesPlayed: 0,
-          gamesWon: 0,
-          totalScore: 0,
-          averageScore: 0
-        }
-      };
+      const apiUser = data.user as AuthResponse['user'];
+      const newUser: User = mapAuthUserToUser(apiUser);
       
       setUser(newUser);
       setToken(data.token);
@@ -136,9 +142,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error(response.message || 'Xác thực token thất bại');
       }
 
-      const apiUser = response.data as any;
+      const apiUser = response.data as User;
       const newUser: User = {
-        _id: apiUser._id || apiUser.id || '',
+        _id: apiUser._id || '',
         userName: apiUser.userName || '',
         email: apiUser.email || '',
         gender: apiUser.gender || 'male',
@@ -189,28 +195,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const data = response.data as AuthResponse;
       
       // Create new user object to ensure reference change
-      const apiUser = data.user as any; // Type assertion for API response
-      const newUser: User = {
-        _id: apiUser._id || apiUser.id || '',
-        userName: apiUser.userName || '',
-        email: apiUser.email || '',
-        gender: apiUser.gender || 'male',
-        address: apiUser.address || '',
-        role: apiUser.role || 'student',
-        avatar: apiUser.avatar,
-        userDescription: apiUser.userDescription,
-        points: apiUser.points || 0,
-        listFriend: apiUser.listFriend || [],
-        isVerified: apiUser.isVerified || false,
-        createdAt: apiUser.createdAt || new Date().toISOString(),
-        updatedAt: apiUser.updatedAt || new Date().toISOString(),
-        stats: apiUser.stats || {
-          gamesPlayed: 0,
-          gamesWon: 0,
-          totalScore: 0,
-          averageScore: 0
-        }
-      };
+      const apiUser = data.user as AuthResponse['user'];
+      const newUser: User = mapAuthUserToUser(apiUser);
       
       setUser(newUser);
       setToken(data.token);
