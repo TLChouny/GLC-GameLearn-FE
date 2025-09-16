@@ -1,0 +1,3 @@
+# Copy nội dung này vào file .env.local trong thư mục FE/frontend
+
+VITE_API_URL=http://localhost:5000/api
