@@ -1,6 +1,6 @@
 import type { BaseEntity } from './base';
 
-// Ranking Entity
+// ===== RANKING TYPES =====
 export interface Ranking extends BaseEntity {
   userId: string;
   totalPoints: number;
@@ -8,96 +8,51 @@ export interface Ranking extends BaseEntity {
   season: string;
 }
 
-// Ranking with populated user data
+// ===== RANKING WITH POPULATED DATA =====
 export interface RankingWithUser extends Omit<Ranking, 'userId'> {
-  userId: {
-    _id: string;
-    userName: string;
-    avatar?: string;
-    points: number;
-    stats: {
-      gamesPlayed: number;
-      gamesWon: number;
-      totalScore: number;
-      averageScore: number;
-    };
-  };
+  userId: RankingUserReference;
 }
 
-// Season information
-export interface Season {
-  name: string;
-  startDate: string;
-  endDate: string;
-  isActive: boolean;
-  totalPlayers: number;
-}
-
-// Leaderboard types
-export interface LeaderboardEntry {
-  rank: number;
-  user: {
-    _id: string;
-    userName: string;
-    avatar?: string;
-    points: number;
-  };
+// ===== RANKING USER REFERENCE =====
+export interface RankingUserReference {
+  _id: string;
+  userName: string;
+  avatar?: string;
+  points: number;
   stats: {
     gamesPlayed: number;
     gamesWon: number;
-    winRate: number;
+    totalScore: number;
+    averageScore: number;
   };
-  season: string;
 }
 
-export interface Leaderboard {
-  season: string;
-  entries: LeaderboardEntry[];
-  totalPlayers: number;
-  lastUpdated: string;
-}
-
-// Ranking statistics
-export interface RankingStats {
-  totalSeasons: number;
-  currentSeason: string;
-  totalPlayers: number;
-  averagePoints: number;
-  topPlayer: RankingWithUser;
-  seasonHistory: Season[];
-}
-
-// User ranking history
-export interface UserRankingHistory {
-  userId: string;
-  userName: string;
-  seasons: {
-    season: string;
-    rank: number;
-    totalPoints: number;
-    gamesPlayed: number;
-    gamesWon: number;
-  }[];
-  bestRank: number;
-  bestSeason: string;
-  totalPointsAllTime: number;
-}
-
-// Request types
-export interface UpdateRankingRequest {
+// ===== RANKING REQUEST TYPES =====
+export interface CreateRankingRequest {
   userId: string;
   totalPoints: number;
+  rank: number;
   season: string;
 }
 
-export interface UpdateAllRankingsRequest {
-  season: string;
+export interface UpdateRankingRequest {
+  totalPoints?: number;
+  rank?: number;
+  season?: string;
 }
 
-// Response types
+export interface UpdateRankingsRequest {
+  season: string;
+  rankings: Array<{
+    userId: string;
+    totalPoints: number;
+    rank: number;
+  }>;
+}
+
+// ===== RANKING RESPONSE TYPES =====
 export interface RankingListResponse {
   rankings: RankingWithUser[];
-  season: string;
   pagination: {
     currentPage: number;
     totalPages: number;
@@ -107,85 +62,166 @@ export interface RankingListResponse {
   };
 }
 
-export interface TopRankingsResponse {
-  rankings: RankingWithUser[];
-  season: string;
-  topCount: number;
-}
-
-export interface SeasonListResponse {
-  seasons: string[];
-}
-
-export interface UserRankingResponse {
-  ranking: RankingWithUser;
-}
-
-export interface LeaderboardResponse {
-  leaderboard: Leaderboard;
-}
-
 export interface RankingStatsResponse {
-  stats: RankingStats;
+  totalRankings: number;
+  rankingsBySeason: Array<{
+    season: string;
+    count: number;
+  }>;
+  averagePoints: number;
+  topRankings: RankingWithUser[];
 }
 
-export interface UserRankingHistoryResponse {
-  history: UserRankingHistory;
+// ===== RANKING QUERY PARAMS =====
+export interface RankingQueryParams {
+  page?: number;
+  limit?: number;
+  season?: string;
+  userId?: string;
+  minRank?: number;
+  maxRank?: number;
+  minPoints?: number;
+  maxPoints?: number;
 }
 
-// Filter types
+// ===== RANKING FORM TYPES =====
+export interface RankingForm {
+  userId: string;
+  totalPoints: number;
+  rank: number;
+  season: string;
+}
+
+export interface RankingSearchForm {
+  season?: string;
+  userId?: string;
+  minRank?: number;
+  maxRank?: number;
+  minPoints?: number;
+  maxPoints?: number;
+}
+
+// ===== RANKING VALIDATION =====
+export interface RankingValidation {
+  isValid: boolean;
+  errors: string[];
+}
+
+// ===== RANKING STATS =====
+export interface RankingStats {
+  totalRankings: number;
+  rankingsBySeason: Array<{
+    season: string;
+    count: number;
+  }>;
+  averagePoints: number;
+  topRankings: RankingWithUser[];
+}
+
+// ===== RANKING ANALYTICS =====
+export interface RankingAnalytics {
+  season: string;
+  totalPlayers: number;
+  averagePoints: number;
+  highestPoints: number;
+  lowestPoints: number;
+  rankDistribution: Array<{
+    rankRange: string;
+    count: number;
+  }>;
+}
+
+export interface RankingAnalyticsResponse {
+  analytics: RankingAnalytics[];
+  summary: {
+    totalSeasons: number;
+    totalPlayers: number;
+    averagePoints: number;
+    mostCompetitiveSeason: string;
+  };
+}
+
+// ===== RANKING FILTERS =====
 export interface RankingFilters {
   season?: string;
+  userId?: string;
+  minRank?: number;
+  maxRank?: number;
+  minPoints?: number;
+  maxPoints?: number;
   page?: number;
   limit?: number;
 }
 
-export interface TopRankingsFilters {
+// ===== LEADERBOARD TYPES =====
+export interface Leaderboard {
   season: string;
-  limit?: number;
+  rankings: RankingWithUser[];
+  totalPlayers: number;
+  lastUpdated: string;
 }
 
-// Achievement types
-export interface Achievement {
-  id: string;
+export interface LeaderboardResponse {
+  leaderboard: Leaderboard;
+  userRank?: RankingWithUser;
+  nearbyRankings: RankingWithUser[];
+}
+
+// ===== SEASON TYPES =====
+export interface Season {
   name: string;
-  description: string;
-  icon: string;
-  points: number;
-  category: 'ranking' | 'game' | 'social' | 'item';
-  requirements: {
-    type: string;
-    value: number;
-  }[];
-  unlocked: boolean;
-  unlockedAt?: string;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  description?: string;
 }
 
-export interface UserAchievements {
+export interface SeasonResponse {
+  seasons: Season[];
+  currentSeason?: Season;
+  upcomingSeason?: Season;
+}
+
+// ===== RANKING PROGRESS =====
+export interface RankingProgress {
   userId: string;
-  achievements: Achievement[];
-  totalPoints: number;
-  unlockedCount: number;
-  totalCount: number;
+  currentRank: number;
+  previousRank: number;
+  rankChange: number;
+  currentPoints: number;
+  previousPoints: number;
+  pointsChange: number;
+  season: string;
 }
 
-// Ranking comparison
+export interface RankingProgressResponse {
+  progress: RankingProgress[];
+  summary: {
+    totalUsers: number;
+    usersImproved: number;
+    usersDeclined: number;
+    averageRankChange: number;
+  };
+}
+
+// ===== RANKING COMPARISON =====
 export interface RankingComparison {
-  user1: {
-    userId: string;
-    userName: string;
-    rank: number;
-    points: number;
+  userId: string;
+  currentSeason: RankingWithUser;
+  previousSeason?: RankingWithUser;
+  improvement: {
+    rankChange: number;
+    pointsChange: number;
+    percentageChange: number;
   };
-  user2: {
-    userId: string;
-    userName: string;
-    rank: number;
-    points: number;
-  };
-  season: string;
-  difference: {
-    rank: number;
-    points: number;
+}
+
+export interface RankingComparisonResponse {
+  comparisons: RankingComparison[];
+  summary: {
+    totalComparisons: number;
+    averageImprovement: number;
+    mostImproved: RankingComparison;
+    mostDeclined: RankingComparison;
   };
 }

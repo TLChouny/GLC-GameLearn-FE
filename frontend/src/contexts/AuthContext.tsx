@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { User, LoginRequest, RegisterRequest, AuthResponse } from '../types';
-import apiService from '../services/api';
+import { authService } from '../services';
 
 interface AuthContextType {
   user: User | null;
@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Normalize minimal auth user payload to full User shape
   const mapAuthUserToUser = (authUser: AuthResponse['user']): User => {
     return {
-      _id: authUser.id,
+      _id: (authUser as { _id?: string; id?: string })._id || (authUser as { _id?: string; id?: string }).id || '',
       userName: authUser.userName,
       email: authUser.email,
       gender: 'male',
@@ -102,7 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
 
     try {
-      const response = await apiService.login(credentials.email, credentials.password);
+      const response = await authService.login(credentials);
       
       if (!response.success) {
         throw new Error(response.message || 'Đăng nhập thất bại');
@@ -136,7 +136,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     try {
       // Get user info from token by calling the /me endpoint
-      const response = await apiService.getCurrentUser(token);
+      const response = await authService.getCurrentUser();
       
       if (!response.success) {
         throw new Error(response.message || 'Xác thực token thất bại');
@@ -186,7 +186,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
 
     try {
-      const response = await apiService.register(userData);
+      const response = await authService.register(userData);
       
       if (!response.success) {
         throw new Error(response.message || 'Đăng ký thất bại');

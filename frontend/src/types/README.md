@@ -1,197 +1,175 @@
-# TypeScript Types Documentation
+# Frontend Types Documentation
 
-Bộ types đầy đủ cho Game Learning Frontend, được tạo dựa trên backend MongoDB models.
+## 📁 Cấu trúc Types
 
-## Cấu trúc Types
+Các file types được tổ chức theo từng model riêng biệt để dễ dàng maintain và mở rộng.
 
-### 📁 `base.ts` - Types cơ bản
-- `BaseEntity` - Interface chung cho tất cả entities
-- `ApiResponse<T>` - Response format từ API
-- `PaginationInfo` - Thông tin phân trang
-- Enums: `UserRole`, `Gender`, `Difficulty`, `ItemType`, `MatchStatus`
-- Utility types: `Optional<T, K>`, `RequiredFields<T, K>`
+### 🗂️ Danh sách Files
 
-### 📁 `user.ts` - User & Authentication
-- `User` - Entity người dùng
-- `UserWithDetails` - User với các reference được populate
-- `UserStats` - Thống kê người dùng
-- `LoginRequest`, `RegisterRequest` - Request types
-- `AuthResponse` - Response sau khi đăng nhập/đăng ký
-- `UserReference` - Reference cho các entity khác
+| File | Mô tả | Backend Model |
+|------|-------|---------------|
+| `base.ts` | Base types, enums, và interfaces chung | - |
+| `user.ts` | User types và authentication | `User.ts` |
+| `subject.ts` | Subject types | `Subject.ts` |
+| `lesson.ts` | Lesson types | `Lesson.ts` |
+| `gameChallenge.ts` | Game Challenge types | `GameChallenge.ts` |
+| `match.ts` | Match types | `Match.ts` |
+| `item.ts` | Item, HouseDecor, Trade types | `Item.ts`, `HouseDecor.ts`, `Trade.ts` |
+| `certificate.ts` | Certificate types | `Certificate.ts` |
+| `trade.ts` | Trade types riêng biệt | `Trade.ts` |
+| `ranking.ts` | Ranking types | `Ranking.ts` |
+| `houseDecor.ts` | House Decor types riêng biệt | `HouseDecor.ts` |
+| `luckyWheel.ts` | Lucky Wheel types | `LuckyWheel.ts`, `LuckyWheelPrize.ts`, `LuckyWheelSpin.ts` |
+| `api.ts` | API endpoints và response types | - |
+| `ui.ts` | UI component types | - |
+| `store.ts` | State management types | - |
+| `index.ts` | Export tất cả types | - |
 
-### 📁 `game.ts` - Game System
-- `Subject`, `Lesson` - Môn học và bài học
-- `GameChallenge` - Thử thách game
-- `Match` - Trận đấu
-- `Certificate` - Chứng chỉ
-- Request/Response types cho tất cả game operations
-- Filter types cho search và pagination
+### 🎯 Cấu trúc mỗi file types
 
-### 📁 `item.ts` - Item & Trading System
-- `Item` - Vật phẩm
-- `HouseDecoration` - Trang trí nhà
-- `Trade` - Giao dịch
-- `ShoppingCart`, `UserInventory` - Giỏ hàng và kho đồ
-- `ItemStats` - Thống kê items
-- Filter types cho shop và inventory
+Mỗi file types bao gồm:
 
-### 📁 `ranking.ts` - Ranking System
-- `Ranking` - Bảng xếp hạng
-- `Leaderboard` - Bảng xếp hạng chi tiết
-- `Season` - Mùa giải
-- `Achievement` - Thành tích
-- `UserRankingHistory` - Lịch sử xếp hạng của user
-- Comparison và statistics types
-
-### 📁 `api.ts` - API Configuration
-- `ApiClient` - Interface cho API client
-- `ApiEndpoints` - Tất cả API endpoints
-- `ApiRequest`, `ApiResponse` - Request/Response types
-- Error types: `NetworkError`, `ValidationError`, etc.
-- WebSocket types cho real-time features
-- File upload và interceptor types
-
-### 📁 `ui.ts` - UI Components
-- Component props: `ButtonProps`, `ModalProps`, `InputProps`
-- Table và form types
-- Theme và layout types
-- Game UI components
-- Chart và notification types
-
-### 📁 `store.ts` - State Management
-- Zustand store interfaces
-- `AuthStore`, `UserStore`, `GameStore`, `ItemStore`, `RankingStore`
-- `UIStore` cho UI state
-- `RootStore` - Combined store
-- Persist và middleware configuration
-
-## Cách sử dụng
-
-### Import types
+#### 1. **Entity Types**
 ```typescript
-import { User, GameChallenge, ApiResponse } from '@/types';
-import type { LoginRequest, AuthResponse } from '@/types';
-```
-
-### Sử dụng với API calls
-```typescript
-import { ApiResponse, User } from '@/types';
-
-const fetchUsers = async (): Promise<ApiResponse<User[]>> => {
-  const response = await api.get('/api/users');
-  return response.data;
-};
-```
-
-### Sử dụng với Zustand store
-```typescript
-import { AuthStore } from '@/types';
-
-const useAuthStore = create<AuthStore>((set, get) => ({
-  user: null,
-  token: null,
-  isAuthenticated: false,
-  isLoading: false,
-  error: null,
-  
-  login: async (email, password) => {
-    // Implementation
-  },
-  // ... other actions
-}));
-```
-
-### Sử dụng với React components
-```typescript
-import { ButtonProps, User } from '@/types';
-
-interface UserCardProps {
-  user: User;
-  onEdit?: (user: User) => void;
-}
-
-const UserCard: React.FC<UserCardProps> = ({ user, onEdit }) => {
-  // Component implementation
-};
-```
-
-## Type Safety Features
-
-### 1. **Strict Typing**
-- Tất cả API responses đều có type safety
-- Request/Response types được validate
-- Enum types cho các giá trị cố định
-
-### 2. **Utility Types**
-```typescript
-// Tạo type với một số field optional
-type PartialUser = Optional<User, 'avatar' | 'userDescription'>;
-
-// Tạo type với một số field required
-type RequiredUser = RequiredFields<User, 'email' | 'userName'>;
-```
-
-### 3. **Generic Types**
-```typescript
-// Paginated response cho bất kỳ entity nào
-type PaginatedUsers = PaginatedApiResponse<User>;
-type PaginatedItems = PaginatedApiResponse<Item>;
-```
-
-### 4. **Union Types**
-```typescript
-// API response có thể là success hoặc error
-type ApiResult<T> = ApiSuccessResponse<T> | ApiErrorResponse;
-```
-
-## Best Practices
-
-### 1. **Import chỉ những gì cần**
-```typescript
-// ✅ Good
-import { User, LoginRequest } from '@/types';
-
-// ❌ Avoid
-import * as Types from '@/types';
-```
-
-### 2. **Sử dụng type assertions cẩn thận**
-```typescript
-// ✅ Good - với type guard
-if (response.success) {
-  const data = response.data; // TypeScript biết đây là success response
-}
-
-// ❌ Avoid - force casting
-const data = response.data as User[];
-```
-
-### 3. **Extend types khi cần**
-```typescript
-interface ExtendedUser extends User {
-  customField: string;
+export interface ModelName extends BaseEntity {
+  // Các fields chính của model
 }
 ```
 
-### 4. **Sử dụng utility types**
+#### 2. **Request Types**
 ```typescript
-// Tạo form data type từ entity
-type UserFormData = Partial<Pick<User, 'userName' | 'email' | 'address'>>;
+export interface CreateModelRequest {
+  // Fields cần thiết để tạo mới
+}
+
+export interface UpdateModelRequest {
+  // Fields có thể cập nhật (optional)
+}
 ```
 
-## Migration từ Backend
+#### 3. **Response Types**
+```typescript
+export interface ModelListResponse {
+  models: ModelName[];
+  pagination: PaginationInfo;
+}
 
-Khi backend có thay đổi, cập nhật types theo thứ tự:
+export interface ModelStatsResponse {
+  // Thống kê và analytics
+}
+```
 
-1. **Models** - Cập nhật entity interfaces
-2. **Controllers** - Cập nhật request/response types  
-3. **Routes** - Cập nhật API endpoint types
-4. **Frontend** - Cập nhật UI và store types
+#### 4. **Query Params**
+```typescript
+export interface ModelQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  // Các filter khác
+}
+```
 
-## Linting & Validation
+#### 5. **Form Types**
+```typescript
+export interface ModelForm {
+  // Cấu trúc form data
+}
 
-Types được thiết kế để:
-- ✅ Pass TypeScript strict mode
-- ✅ Compatible với ESLint rules
-- ✅ Support IntelliSense trong IDE
-- ✅ Catch errors tại compile time
+export interface ModelSearchForm {
+  // Cấu trúc search form
+}
+```
+
+#### 6. **Validation Types**
+```typescript
+export interface ModelValidation {
+  isValid: boolean;
+  errors: string[];
+}
+```
+
+#### 7. **Stats & Analytics**
+```typescript
+export interface ModelStats {
+  // Thống kê tổng quan
+}
+
+export interface ModelAnalytics {
+  // Phân tích chi tiết
+}
+```
+
+### 🔗 Relationships
+
+#### User Model
+- Liên kết với: `Item`, `HouseDecor`, `GameChallenge`, `Match`, `Certificate`
+- References: `listFriend` (User[])
+
+#### Subject Model  
+- Liên kết với: `Lesson`, `GameChallenge`
+- References: `lessonId` (Lesson[])
+
+#### GameChallenge Model
+- Liên kết với: `Subject`, `Match`, `Certificate`
+- References: `subjectId` (Subject)
+
+#### Match Model
+- Liên kết với: `User`, `GameChallenge`, `Trade`
+- References: `players` (User[]), `gameChallengeId` (GameChallenge)
+
+#### Item Model
+- Liên kết với: `User`, `HouseDecor`, `Trade`, `LuckyWheelPrize`
+- References: `itemId` trong các models khác
+
+#### LuckyWheel Models
+- `LuckyWheel` → `LuckyWheelPrize` → `LuckyWheelSpin`
+- Liên kết với: `User`, `Item`
+
+### 📝 Cách sử dụng
+
+#### Import từ file riêng biệt:
+```typescript
+import { User, CreateUserRequest, UserListResponse } from '../types/user';
+import { Subject, CreateSubjectRequest } from '../types/subject';
+```
+
+#### Import từ index (khuyến nghị):
+```typescript
+import { 
+  User, 
+  CreateUserRequest, 
+  UserListResponse,
+  Subject,
+  CreateSubjectRequest 
+} from '../types';
+```
+
+### 🎨 Naming Conventions
+
+- **Entity Types**: `ModelName` (VD: `User`, `Subject`)
+- **Request Types**: `CreateModelRequest`, `UpdateModelRequest`
+- **Response Types**: `ModelListResponse`, `ModelStatsResponse`
+- **Form Types**: `ModelForm`, `ModelSearchForm`
+- **Validation Types**: `ModelValidation`
+- **Stats Types**: `ModelStats`, `ModelAnalytics`
+- **Reference Types**: `ModelReference`
+- **With Details Types**: `ModelWithDetails`
+
+### 🔄 Updates
+
+Khi backend models thay đổi:
+1. Cập nhật interface tương ứng trong file types
+2. Thêm/bớt request/response types nếu cần
+3. Cập nhật relationships và references
+4. Test lại để đảm bảo không có lỗi linting
+
+### 📋 Checklist
+
+- [x] Tất cả 13 backend models đã có types tương ứng
+- [x] Không có xung đột tên types
+- [x] Relationships được định nghĩa đúng
+- [x] Request/Response types đầy đủ
+- [x] Form và validation types
+- [x] Stats và analytics types
+- [x] Không có lỗi linting
+- [x] Documentation đầy đủ

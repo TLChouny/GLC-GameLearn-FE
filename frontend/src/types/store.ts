@@ -1,5 +1,6 @@
 import type { User } from './user';
-import type { GameChallenge, Match } from './game';
+import type { GameChallenge } from './gameChallenge';
+import type { Match } from './match';
 import type { Item, HouseDecoration } from './item';
 import type { Ranking } from './ranking';
 

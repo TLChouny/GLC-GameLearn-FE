@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { authService } from '../../services';
 
 const AuthCallbackPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -23,14 +24,18 @@ const AuthCallbackPage: React.FC = () => {
 
   const handleOAuthSuccess = async (token: string) => {
     try {
-      // Save token to localStorage
-      localStorage.setItem('auth_token', token);
+      // Use authService to handle OAuth callback
+      const result = authService.handleOAuthCallback(token);
       
-      // Call loginWithToken function from AuthContext to update user state
-      await loginWithToken(token);
-      
-      // Redirect to home page
-      navigate('/');
+      if (result.success) {
+        // Call loginWithToken function from AuthContext to update user state
+        await loginWithToken(token);
+        
+        // Redirect to home page
+        navigate('/');
+      } else {
+        throw new Error('OAuth callback failed');
+      }
     } catch (error) {
       console.error('OAuth success handling error:', error);
       navigate('/login?error=oauth_error');

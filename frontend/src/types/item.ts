@@ -1,72 +1,29 @@
-import type { BaseEntity, ItemType } from './base';
+import type { BaseEntity } from './base';
 
-// Item Entity
+// ===== ITEM TYPES =====
 export interface Item extends BaseEntity {
   itemName: string;
-  itemType: ItemType;
+  itemType: 'weapon' | 'armor' | 'consumable' | 'decoration' | 'special';
   itemPrice: number;
   itemImage: string;
 }
 
-// House Decoration Entity
-export interface HouseDecoration extends BaseEntity {
-  houseName: string;
-  houseDescription: string;
-  itemId: string[];
-}
-
-// House Decoration with populated items
-export interface HouseDecorationWithItems extends Omit<HouseDecoration, 'itemId'> {
-  itemId: Item[];
-}
-
-// Trade Entity
-export interface Trade extends BaseEntity {
-  matchId: string;
-  itemTaken: string;
-  bookingId?: string;
-  arvRegimenId?: string;
-}
-
-// Trade with populated data
-export interface TradeWithDetails extends Omit<Trade, 'itemTaken' | 'matchId'> {
-  itemTaken: Item;
-  matchId: {
-    _id: string;
-    status: string;
-    players: string[];
-  };
-}
-
-// Request types
+// ===== ITEM REQUEST TYPES =====
 export interface CreateItemRequest {
   itemName: string;
-  itemType: ItemType;
+  itemType: 'weapon' | 'armor' | 'consumable' | 'decoration' | 'special';
   itemPrice: number;
   itemImage: string;
 }
 
 export interface UpdateItemRequest {
   itemName?: string;
-  itemType?: ItemType;
+  itemType?: 'weapon' | 'armor' | 'consumable' | 'decoration' | 'special';
   itemPrice?: number;
   itemImage?: string;
 }
 
-export interface CreateHouseDecorationRequest {
-  houseName: string;
-  houseDescription: string;
-  itemId: string[];
-}
-
-export interface CreateTradeRequest {
-  matchId: string;
-  itemTaken: string;
-  bookingId?: string;
-  arvRegimenId?: string;
-}
-
-// Response types
+// ===== ITEM RESPONSE TYPES =====
 export interface ItemListResponse {
   items: Item[];
   pagination: {
@@ -78,49 +35,68 @@ export interface ItemListResponse {
   };
 }
 
-export interface HouseDecorationListResponse {
-  houseDecorations: HouseDecorationWithItems[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalDecorations: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
+export interface ItemStatsResponse {
+  totalItems: number;
+  itemsByType: Array<{
+    itemType: string;
+    count: number;
+  }>;
+  averagePrice: number;
+  mostExpensiveItem: Item;
+  cheapestItem: Item;
 }
 
-export interface TradeHistoryResponse {
-  trades: TradeWithDetails[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalTrades: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
+// ===== ITEM QUERY PARAMS =====
+export interface ItemQueryParams {
+  page?: number;
+  limit?: number;
+  itemType?: 'weapon' | 'armor' | 'consumable' | 'decoration' | 'special';
+  search?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
-// Filter types
+// ===== ITEM FORM TYPES =====
+export interface ItemForm {
+  itemName: string;
+  itemType: 'weapon' | 'armor' | 'consumable' | 'decoration' | 'special';
+  itemPrice: number;
+  itemImage: string;
+}
+
+export interface ItemSearchForm {
+  search: string;
+  itemType?: 'weapon' | 'armor' | 'consumable' | 'decoration' | 'special';
+  minPrice?: number;
+  maxPrice?: number;
+}
+
+// ===== ITEM VALIDATION =====
+export interface ItemValidation {
+  isValid: boolean;
+  errors: string[];
+}
+
+// ===== ITEM STATS =====
+export interface ItemStats {
+  totalItems: number;
+  itemsByType: Record<'weapon' | 'armor' | 'consumable' | 'decoration' | 'special', number>;
+  averagePrice: number;
+  mostExpensiveItem: Item;
+  cheapestItem: Item;
+}
+
+// ===== ITEM FILTERS =====
 export interface ItemFilters {
-  itemType?: ItemType;
+  itemType?: 'weapon' | 'armor' | 'consumable' | 'decoration' | 'special';
   minPrice?: number;
   maxPrice?: number;
   page?: number;
   limit?: number;
+  search?: string;
 }
 
-export interface HouseDecorationFilters {
-  page?: number;
-  limit?: number;
-}
-
-export interface TradeFilters {
-  matchId?: string;
-  page?: number;
-  limit?: number;
-}
-
-// Shopping cart types
+// ===== SHOPPING CART TYPES =====
 export interface CartItem {
   item: Item;
   quantity: number;
@@ -132,18 +108,56 @@ export interface ShoppingCart {
   totalItems: number;
 }
 
-// Inventory types
+// ===== INVENTORY TYPES =====
 export interface UserInventory {
   items: Item[];
   houseDecorations: HouseDecorationWithItems[];
   totalValue: number;
 }
 
-// Item statistics
-export interface ItemStats {
-  totalItems: number;
-  itemsByType: Record<ItemType, number>;
-  averagePrice: number;
-  mostExpensiveItem: Item;
-  cheapestItem: Item;
+// ===== HOUSE DECORATION TYPES =====
+export interface HouseDecoration extends BaseEntity {
+  houseName: string;
+  houseDescription: string;
+  itemId: string[];
 }
+
+export interface HouseDecorationWithItems extends Omit<HouseDecoration, 'itemId'> {
+  itemId: Item[];
+}
+
+// ===== HOUSE DECORATION REQUEST TYPES =====
+export interface CreateHouseDecorationRequest {
+  houseName: string;
+  houseDescription: string;
+  itemId: string[];
+}
+
+export interface UpdateHouseDecorationRequest {
+  houseName?: string;
+  houseDescription?: string;
+  itemId?: string[];
+}
+
+// ===== HOUSE DECORATION RESPONSE TYPES =====
+export interface HouseDecorationListResponse {
+  houseDecorations: HouseDecorationWithItems[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalDecorations: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+// ===== HOUSE DECORATION QUERY PARAMS =====
+export interface HouseDecorationQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  itemType?: string;
+}
+
+// ===== TRADE TYPES =====
+// Trade types đã được định nghĩa trong trade.ts riêng biệt

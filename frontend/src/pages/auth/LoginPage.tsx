@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Input, Card } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
+import { authService } from '../../services';
 import type { LoginRequest } from '../../types';
 
 const LoginPage: React.FC = () => {
@@ -185,7 +186,7 @@ const LoginPage: React.FC = () => {
             <Button
               variant="secondary"
               className="w-full bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
-              onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
+              onClick={authService.loginWithGoogle}
             >
               <div className="flex items-center justify-center">
                 <svg className="w-6 h-6 mr-2" viewBox="0 0 24 24">
@@ -201,7 +202,7 @@ const LoginPage: React.FC = () => {
             <Button
               variant="secondary"
               className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
-              onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/facebook`}
+              onClick={authService.loginWithFacebook}
             >
               <div className="flex items-center justify-center">
                 <svg className="w-6 h-6 mr-2" fill="white" viewBox="0 0 24 24">

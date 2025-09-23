@@ -228,6 +228,219 @@ class ApiService {
   async updateRanking(data: unknown) {
     return this.post('/rankings/update', data);
   }
+
+  // Lucky Wheel methods
+  async createLuckyWheel(data: unknown) {
+    return this.post('/lucky-wheels', data);
+  }
+
+  async getLuckyWheels(page = 1, limit = 10) {
+    return this.get(`/lucky-wheels?page=${page}&limit=${limit}`);
+  }
+
+  async getLuckyWheelById(id: string) {
+    return this.get(`/lucky-wheels/${id}`);
+  }
+
+  async updateLuckyWheel(id: string, data: unknown) {
+    return this.put(`/lucky-wheels/${id}`, data);
+  }
+
+  async deleteLuckyWheel(id: string) {
+    return this.delete(`/lucky-wheels/${id}`);
+  }
+
+  async createLuckyWheelPrize(wheelId: string, data: unknown) {
+    return this.post(`/lucky-wheels/${wheelId}/prizes`, data);
+  }
+
+  async getLuckyWheelPrizes(wheelId: string, page = 1, limit = 10) {
+    return this.get(`/lucky-wheels/${wheelId}/prizes?page=${page}&limit=${limit}`);
+  }
+
+  async updateLuckyWheelPrize(id: string, data: unknown) {
+    return this.put(`/lucky-wheels/prizes/${id}`, data);
+  }
+
+  async deleteLuckyWheelPrize(id: string) {
+    return this.delete(`/lucky-wheels/prizes/${id}`);
+  }
+
+  async spinLuckyWheel(wheelId: string) {
+    return this.post(`/lucky-wheels/${wheelId}/spin`);
+  }
+
+  async getWheelInfo(wheelId: string) {
+    return this.get(`/lucky-wheels/${wheelId}/info`);
+  }
+
+  async getUserSpinHistory(page = 1, limit = 10, wheelId?: string) {
+    const url = wheelId 
+      ? `/lucky-wheels/user/history/${wheelId}?page=${page}&limit=${limit}`
+      : `/lucky-wheels/user/history?page=${page}&limit=${limit}`;
+    return this.get(url);
+  }
+
+  async getUserSpinStats(wheelId?: string) {
+    const url = wheelId 
+      ? `/lucky-wheels/user/stats/${wheelId}`
+      : '/lucky-wheels/user/stats';
+    return this.get(url);
+  }
+
+  // Subject methods
+  async createSubject(data: unknown) {
+    return this.post('/subjects', data);
+  }
+
+  async getSubjects(page = 1, limit = 10, search?: string) {
+    const params = new URLSearchParams();
+    params.append('page', String(page));
+    params.append('limit', String(limit));
+    if (search) params.append('search', search);
+    return this.get(`/subjects?${params.toString()}`);
+  }
+
+  async getSubjectById(id: string) {
+    return this.get(`/subjects/${id}`);
+  }
+
+  async updateSubject(id: string, data: unknown) {
+    return this.put(`/subjects/${id}`, data);
+  }
+
+  async deleteSubject(id: string) {
+    return this.delete(`/subjects/${id}`);
+  }
+
+  // Lesson methods
+  async createLesson(data: unknown) {
+    return this.post('/lessons', data);
+  }
+
+  async getLessons(page = 1, limit = 10, subjectId?: string, search?: string) {
+    const params = new URLSearchParams();
+    params.append('page', String(page));
+    params.append('limit', String(limit));
+    if (subjectId) params.append('subjectId', subjectId);
+    if (search) params.append('search', search);
+    return this.get(`/lessons?${params.toString()}`);
+  }
+
+  async getLessonById(id: string) {
+    return this.get(`/lessons/${id}`);
+  }
+
+  async updateLesson(id: string, data: unknown) {
+    return this.put(`/lessons/${id}`, data);
+  }
+
+  async deleteLesson(id: string) {
+    return this.delete(`/lessons/${id}`);
+  }
+
+  async getLessonsBySubject(subjectId: string, page = 1, limit = 10) {
+    return this.get(`/subjects/${subjectId}/lessons?page=${page}&limit=${limit}`);
+  }
+
+  // Certificate methods
+  async createCertificate(data: unknown) {
+    return this.post('/certificates', data);
+  }
+
+  async getCertificates(page = 1, limit = 10, gameChallengeId?: string, matchId?: string, userId?: string) {
+    const params = new URLSearchParams();
+    params.append('page', String(page));
+    params.append('limit', String(limit));
+    if (gameChallengeId) params.append('gameChallengeId', gameChallengeId);
+    if (matchId) params.append('matchId', matchId);
+    if (userId) params.append('userId', userId);
+    return this.get(`/certificates?${params.toString()}`);
+  }
+
+  async getCertificateById(id: string) {
+    return this.get(`/certificates/${id}`);
+  }
+
+  async updateCertificate(id: string, data: unknown) {
+    return this.put(`/certificates/${id}`, data);
+  }
+
+  async deleteCertificate(id: string) {
+    return this.delete(`/certificates/${id}`);
+  }
+
+  async getUserCertificates(userId: string, page = 1, limit = 10) {
+    return this.get(`/certificates/user/${userId}?page=${page}&limit=${limit}`);
+  }
+
+  async getCertificatesByMatch(matchId: string, page = 1, limit = 10) {
+    return this.get(`/certificates/match/${matchId}?page=${page}&limit=${limit}`);
+  }
+
+  // Trade methods
+  async createTrade(data: unknown) {
+    return this.post('/trades', data);
+  }
+
+  async getTrades(page = 1, limit = 10, matchId?: string, itemId?: string) {
+    const params = new URLSearchParams();
+    params.append('page', String(page));
+    params.append('limit', String(limit));
+    if (matchId) params.append('matchId', matchId);
+    if (itemId) params.append('itemId', itemId);
+    return this.get(`/trades?${params.toString()}`);
+  }
+
+  async getTradeById(id: string) {
+    return this.get(`/trades/${id}`);
+  }
+
+  async updateTrade(id: string, data: unknown) {
+    return this.put(`/trades/${id}`, data);
+  }
+
+  async deleteTrade(id: string) {
+    return this.delete(`/trades/${id}`);
+  }
+
+  async getTradesByMatch(matchId: string, page = 1, limit = 10) {
+    return this.get(`/trades/match/${matchId}?page=${page}&limit=${limit}`);
+  }
+
+  async getUserTrades(userId: string, page = 1, limit = 10) {
+    return this.get(`/trades/user/${userId}?page=${page}&limit=${limit}`);
+  }
+
+  // House Decor methods
+  async createHouseDecor(data: unknown) {
+    return this.post('/house-decorations', data);
+  }
+
+  async getHouseDecorations(page = 1, limit = 10, search?: string, itemType?: string) {
+    const params = new URLSearchParams();
+    params.append('page', String(page));
+    params.append('limit', String(limit));
+    if (search) params.append('search', search);
+    if (itemType) params.append('itemType', itemType);
+    return this.get(`/house-decorations?${params.toString()}`);
+  }
+
+  async getHouseDecorById(id: string) {
+    return this.get(`/house-decorations/${id}`);
+  }
+
+  async updateHouseDecor(id: string, data: unknown) {
+    return this.put(`/house-decorations/${id}`, data);
+  }
+
+  async deleteHouseDecor(id: string) {
+    return this.delete(`/house-decorations/${id}`);
+  }
+
+  async getUserHouseDecorations(userId: string, page = 1, limit = 10) {
+    return this.get(`/house-decorations/user/${userId}?page=${page}&limit=${limit}`);
+  }
 }
 
 // Create singleton instance

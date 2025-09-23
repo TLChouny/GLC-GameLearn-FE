@@ -1,39 +1,26 @@
-import React from 'react';
-import { cn } from '../lib/utils';
+import type React from "react"
+import { cn } from "../lib/utils"
 
 interface AnimatedCardProps {
-  children: React.ReactNode;
-  className?: string;
-  hoverEffect?: 'glow' | 'bounce' | 'wiggle' | 'none';
-  delay?: number;
+  children: React.ReactNode
+  className?: string
+  delay?: number
 }
 
-export const AnimatedCard: React.FC<AnimatedCardProps> = ({
-  children,
-  className,
-  hoverEffect = 'none',
-  delay = 0,
-}) => {
-  const hoverClasses = {
-    glow: 'card-hover-glow',
-    bounce: 'card-hover-bounce',
-    wiggle: 'card-hover-wiggle',
-    none: '',
-  };
-
-  const delayClass = delay > 0 ? `animate-delay-${delay}` : '';
-
+export const AnimatedCard: React.FC<AnimatedCardProps> = ({ children, className, delay = 0 }) => {
   return (
     <div
       className={cn(
-        'bg-card border border-border rounded-lg shadow-md transition-all duration-300',
-        hoverClasses[hoverEffect],
-        delayClass,
-        className
+        "transform transition-all duration-700 ease-out",
+        "hover:scale-[1.02] hover:shadow-2xl",
+        "animate-fade-in-up",
+        className,
       )}
-      style={{ animationDelay: `${delay}ms` }}
+      style={{
+        animationDelay: `${delay}ms`,
+      }}
     >
       {children}
     </div>
-  );
-};
+  )
+}

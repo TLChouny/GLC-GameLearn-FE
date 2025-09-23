@@ -90,13 +90,89 @@ export interface RankingApiEndpoints {
   updateAllRankings: '/api/rankings/update-all';
 }
 
+// Lucky Wheel API types
+export interface LuckyWheelApiEndpoints {
+  // LuckyWheel CRUD
+  createWheel: '/api/lucky-wheels';
+  getAllWheels: '/api/lucky-wheels';
+  getWheelById: '/api/lucky-wheels/:id';
+  updateWheel: '/api/lucky-wheels/:id';
+  deleteWheel: '/api/lucky-wheels/:id';
+  
+  // LuckyWheelPrize CRUD
+  createPrize: '/api/lucky-wheels/:wheelId/prizes';
+  getPrizes: '/api/lucky-wheels/:wheelId/prizes';
+  updatePrize: '/api/lucky-wheels/prizes/:id';
+  deletePrize: '/api/lucky-wheels/prizes/:id';
+  
+  // LuckyWheelSpin Operations
+  spinWheel: '/api/lucky-wheels/:wheelId/spin';
+  getWheelInfo: '/api/lucky-wheels/:wheelId/info';
+  getUserSpinHistory: '/api/lucky-wheels/user/history';
+  getUserSpinHistoryByWheel: '/api/lucky-wheels/user/history/:wheelId';
+  getUserSpinStats: '/api/lucky-wheels/user/stats';
+  getUserSpinStatsByWheel: '/api/lucky-wheels/user/stats/:wheelId';
+}
+
+// Subject API types
+export interface SubjectApiEndpoints {
+  createSubject: '/api/subjects';
+  getAllSubjects: '/api/subjects';
+  getSubjectById: '/api/subjects/:id';
+  updateSubject: '/api/subjects/:id';
+  deleteSubject: '/api/subjects/:id';
+  
+  // Lesson CRUD
+  createLesson: '/api/lessons';
+  getAllLessons: '/api/lessons';
+  getLessonById: '/api/lessons/:id';
+  updateLesson: '/api/lessons/:id';
+  deleteLesson: '/api/lessons/:id';
+  getLessonsBySubject: '/api/subjects/:subjectId/lessons';
+}
+
+// Certificate API types
+export interface CertificateApiEndpoints {
+  createCertificate: '/api/certificates';
+  getAllCertificates: '/api/certificates';
+  getCertificateById: '/api/certificates/:id';
+  updateCertificate: '/api/certificates/:id';
+  deleteCertificate: '/api/certificates/:id';
+  getUserCertificates: '/api/certificates/user/:userId';
+  getCertificatesByMatch: '/api/certificates/match/:matchId';
+}
+
+// Trade API types
+export interface TradeApiEndpoints {
+  createTrade: '/api/trades';
+  getAllTrades: '/api/trades';
+  getTradeById: '/api/trades/:id';
+  updateTrade: '/api/trades/:id';
+  deleteTrade: '/api/trades/:id';
+  getTradesByMatch: '/api/trades/match/:matchId';
+  getUserTrades: '/api/trades/user/:userId';
+}
+
+// House Decor API types
+export interface HouseDecorApiEndpoints {
+  createHouseDecor: '/api/house-decorations';
+  getAllHouseDecorations: '/api/house-decorations';
+  getHouseDecorById: '/api/house-decorations/:id';
+  updateHouseDecor: '/api/house-decorations/:id';
+  deleteHouseDecor: '/api/house-decorations/:id';
+  getUserHouseDecorations: '/api/house-decorations/user/:userId';
+}
+
 // Combined API endpoints
 export interface ApiEndpoints extends 
   AuthApiEndpoints,
   UserApiEndpoints,
-  GameApiEndpoints,
-  ItemApiEndpoints,
-  RankingApiEndpoints {
+  RankingApiEndpoints,
+  LuckyWheelApiEndpoints,
+  SubjectApiEndpoints,
+  CertificateApiEndpoints,
+  TradeApiEndpoints,
+  HouseDecorApiEndpoints {
   health: '/health';
 }
 
