@@ -43,17 +43,17 @@ const WorkingLuckyWheel: React.FC<WorkingLuckyWheelProps> = ({
     { id: '5', text: '20.000 VND', color: '#88FF88', icon: '💰' },
     { id: '6', text: '50.000 VND', color: '#4488FF', icon: '💎' },
     { id: '7', text: 'THÊM LƯỢT', color: '#AA44FF', icon: '🔄' },
-    { id: '8', text: 'x1 mảnh quần áo', color: '#0044AA', icon: '🔗' },
-    { id: '9', text: 'x1 mảnh quần áo', color: '#006600', icon: '😄' },
-    { id: '10', text: 'x1 mảnh túi xách', color: '#4488FF', icon: '🍀' },
-    { id: '11', text: 'x1 mảnh túi xách', color: '#AA44FF', icon: '📧' },
-    { id: '12', text: 'x1 mảnh dây chuyền', color: '#CC8844', icon: '✉️' },
-    { id: '13', text: 'x1 mảnh dây chuyền', color: '#FF6B6B', icon: '📲' },
-    { id: '14', text: 'x1 mảnh vòng tay', color: '#4ECDC4', icon: '📶' },
-    { id: '15', text: 'x1 mảnh vòng tay', color: '#45B7D1', icon: '💵' },
-    { id: '16', text: 'x1 mảnh 100.000 VND', color: '#F7DC6F', icon: '🏆' },
-    { id: '17', text: 'x1 mảnh 200.000 VND', color: '#BB8FCE', icon: '💌' },
-    { id: '18', text: 'x1 mảnh 500.000 VND', color: '#85C1E9', icon: '🎁' }
+    { id: '8', text: 'x1 mảnh quần áo', color: '#0044AA', icon: '🔗' }, // 4 mảnh
+    { id: '9', text: 'x1 mảnh quần áo', color: '#006600', icon: '😄' }, // 4 mảnh
+    { id: '10', text: 'x1 mảnh túi xách', color: '#4488FF', icon: '🍀' }, // 4 mảnh
+    { id: '11', text: 'x1 mảnh túi xách', color: '#AA44FF', icon: '📧' }, // 4 mảnh
+    { id: '12', text: 'x1 mảnh dây chuyền', color: '#CC8844', icon: '✉️' }, // 4 mảnh
+    { id: '13', text: 'x1 mảnh dây chuyền', color: '#FF6B6B', icon: '📲' }, // 4 mảnh
+    { id: '14', text: 'x1 mảnh vòng tay', color: '#4ECDC4', icon: '📶' }, // 4 mảnh
+    { id: '15', text: 'x1 mảnh vòng tay', color: '#45B7D1', icon: '💵' }, // 4 mảnh
+    { id: '16', text: 'x1 mảnh 100.000 VND', color: '#F7DC6F', icon: '🏆' },// 3 mảnh
+    { id: '17', text: 'x1 mảnh 200.000 VND', color: '#BB8FCE', icon: '💌' },// 4 mảnh
+    { id: '18', text: 'x1 mảnh 500.000 VND', color: '#85C1E9', icon: '🎁' } //5 mảnh
   ];
 
   const handleSpin = () => {

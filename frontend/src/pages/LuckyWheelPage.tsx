@@ -22,6 +22,42 @@ const LuckyWheelPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Legend segments hiển thị trên trang (đồng bộ với WorkingLuckyWheel)
+  type WheelSegment = { id: string; text: string; color: string; icon: string };
+  const segments = React.useMemo<WheelSegment[]>(() => [
+    { id: '1', text: '1.000 VND', color: '#FF4444', icon: '📱' },
+    { id: '2', text: '2.000 VND', color: '#CC0000', icon: '📞' },
+    { id: '3', text: '5.000 VND', color: '#FF8800', icon: '🌐' },
+    { id: '4', text: '10.000 VND', color: '#FFDD00', icon: '☁️' },
+    { id: '5', text: '20.000 VND', color: '#88FF88', icon: '💰' },
+    { id: '6', text: '50.000 VND', color: '#4488FF', icon: '💎' },
+    { id: '7', text: 'THÊM LƯỢT', color: '#AA44FF', icon: '🔄' },
+    { id: '8', text: 'x1 mảnh quần áo', color: '#0044AA', icon: '🔗' },
+    { id: '9', text: 'x1 mảnh quần áo', color: '#006600', icon: '😄' },
+    { id: '10', text: 'x1 mảnh túi xách', color: '#4488FF', icon: '🍀' },
+    { id: '11', text: 'x1 mảnh túi xách', color: '#AA44FF', icon: '📧' },
+    { id: '12', text: 'x1 mảnh dây chuyền', color: '#CC8844', icon: '✉️' },
+    { id: '13', text: 'x1 mảnh dây chuyền', color: '#FF6B6B', icon: '📲' },
+    { id: '14', text: 'x1 mảnh vòng tay', color: '#4ECDC4', icon: '📶' },
+    { id: '15', text: 'x1 mảnh vòng tay', color: '#45B7D1', icon: '💵' },
+    { id: '16', text: 'x1 mảnh 100.000 VND', color: '#F7DC6F', icon: '🏆' },
+    { id: '17', text: 'x1 mảnh 200.000 VND', color: '#BB8FCE', icon: '💌' },
+    { id: '18', text: 'x1 mảnh 500.000 VND', color: '#85C1E9', icon: '🎁' }
+  ], []);
+
+  // Loại bỏ mục trùng nội dung (theo text) để hiển thị gọn
+  const uniqueSegments: WheelSegment[] = React.useMemo(() => {
+    const seen = new Set<string>();
+    const result: WheelSegment[] = [];
+    for (const s of segments) {
+      if (!seen.has(s.text)) {
+        seen.add(s.text);
+        result.push(s);
+      }
+    }
+    return result;
+  }, [segments]);
+
   // Load wheels and prizes
   useEffect(() => {
     const loadWheels = async () => {
@@ -284,6 +320,37 @@ const LuckyWheelPage: React.FC = () => {
                       Vòng quay sẵn sàng!
                     </div>
                       </div>
+                    
+                    {/* Legend danh sách phần thưởng (đã gộp nội dung trùng) */}
+                    <div className="mt-8 text-left">
+                      <h3 className="text-xl font-bold text-primary mb-4 flex items-center">
+                        <span className="text-2xl mr-3">🎁</span>
+                        Danh sách phần thưởng
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {uniqueSegments.map((s) => (
+                          <div key={s.id} className="flex items-center p-3 rounded-lg border bg-white/60 backdrop-blur-sm">
+                            <span className="mr-2 text-xl">{s.icon}</span>
+                            <span className="text-sm font-medium text-foreground">{s.text}</span>
+                            <span className="ml-auto w-4 h-4 rounded-full" style={{ backgroundColor: s.color }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Quy luật đổi thưởng */}
+                    <div className="mt-6 text-left">
+                      <h4 className="text-lg font-bold text-primary mb-3">Quy luật đổi thưởng</h4>
+                      <ul className="list-disc pl-6 space-y-1 text-sm text-foreground">
+                        <li>Ghép 3 mảnh "100.000 VND" ➜ đổi 100.000 VND</li>
+                        <li>Ghép 4 mảnh "200.000 VND" ➜ đổi 200.000 VND</li>
+                        <li>Ghép 5 mảnh "500.000 VND" ➜ đổi 500.000 VND</li>
+                        <li>Ghép 4 mảnh "quần áo" ➜ đổi 1 phần quà quần áo</li>
+                        <li>Ghép 4 mảnh "túi xách" ➜ đổi 1 phần quà túi xách</li>
+                        <li>Ghép 4 mảnh "dây chuyền" ➜ đổi 1 phần quà dây chuyền</li>
+                        <li>Ghép 4 mảnh "vòng tay" ➜ đổi 1 phần quà vòng tay</li>
+                      </ul>
+                    </div>
                     </div>
 
                 {/* Error Message */}
