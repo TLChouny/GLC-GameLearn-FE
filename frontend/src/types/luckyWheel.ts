@@ -89,6 +89,7 @@ export interface SpinResult {
     value: number;
     itemId?: string;
   };
+  bonusAdded?: number;
   remainingSpins: number;
 }
 

@@ -1,4 +1,5 @@
 import apiService from './api';
+import type { AxiosRequestConfig } from 'axios';
 import type {
   Item,
   CreateItemRequest,
@@ -21,12 +22,12 @@ import type {
   ApiResponse
 } from '../types';
 
-const BASE_URL = '/items';
+const BASE_URL = '/items/items';
 
 export const itemService = {
   // ===== ITEM CRUD =====
   createItem: async (data: CreateItemRequest): Promise<ApiResponse<Item>> => {
-    return apiService.post(`${BASE_URL}/items`, data);
+    return apiService.post(`${BASE_URL}`, data);
   },
 
   getAllItems: async (params?: ItemQueryParams): Promise<ApiResponse<ItemListResponse>> => {
@@ -38,36 +39,44 @@ export const itemService = {
         }
       });
     }
-    return apiService.get(`${BASE_URL}/items?${queryParams.toString()}`);
+    return apiService.get(`${BASE_URL}?${queryParams.toString()}`);
   },
 
   getItemById: async (id: string): Promise<ApiResponse<Item>> => {
-    return apiService.get(`${BASE_URL}/items/${id}`);
+    return apiService.get(`${BASE_URL}/${id}`);
   },
 
   updateItem: async (id: string, data: UpdateItemRequest): Promise<ApiResponse<Item>> => {
-    return apiService.put(`${BASE_URL}/items/${id}`, data);
+    return apiService.put(`${BASE_URL}/${id}`, data);
   },
 
   deleteItem: async (id: string): Promise<ApiResponse<null>> => {
-    return apiService.delete(`${BASE_URL}/items/${id}`);
+    return apiService.delete(`${BASE_URL}/${id}`);
   },
 
   // ===== ITEM STATS =====
   getItemStats: async (): Promise<ApiResponse<ItemStatsResponse>> => {
-    return apiService.get(`${BASE_URL}/items/stats`);
+    return apiService.get(`${BASE_URL}/stats`);
   },
 
   getItemsByType: async (itemType: 'weapon' | 'armor' | 'consumable' | 'decoration' | 'special', page: number = 1, limit: number = 10): Promise<ApiResponse<ItemListResponse>> => {
-    return apiService.get(`${BASE_URL}/items/type/${itemType}?page=${page}&limit=${limit}`);
+    return apiService.get(`${BASE_URL}/type/${itemType}?page=${page}&limit=${limit}`);
   },
 
   getItemsByPriceRange: async (minPrice: number, maxPrice: number, page: number = 1, limit: number = 10): Promise<ApiResponse<ItemListResponse>> => {
-    return apiService.get(`${BASE_URL}/items/price?min=${minPrice}&max=${maxPrice}&page=${page}&limit=${limit}`);
+    return apiService.get(`${BASE_URL}/price?min=${minPrice}&max=${maxPrice}&page=${page}&limit=${limit}`);
   },
 
   searchItems: async (query: string, page: number = 1, limit: number = 10): Promise<ApiResponse<ItemListResponse>> => {
-    return apiService.get(`${BASE_URL}/items/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+    return apiService.get(`${BASE_URL}/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`);
+  },
+
+  // ===== ITEM IMAGE UPLOAD =====
+  uploadItemImage: async (file: File): Promise<ApiResponse<{ url: string }>> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const config: AxiosRequestConfig = { headers: { 'Content-Type': 'multipart/form-data' } };
+    return apiService.post(`${BASE_URL}/upload`, formData, config);
   },
 
   // ===== HOUSE DECORATION CRUD =====
