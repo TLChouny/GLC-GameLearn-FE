@@ -155,7 +155,7 @@ export interface LuckyWheelQueryParams {
 }
 
 export interface LuckyWheelPrizeQueryParams extends LuckyWheelQueryParams {
-  wheelId: string;
+  wheelId?: string;
 }
 
 export interface LuckyWheelSpinQueryParams extends LuckyWheelQueryParams {

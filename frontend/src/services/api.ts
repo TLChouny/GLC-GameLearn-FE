@@ -254,7 +254,7 @@ class ApiService {
     return this.post(`/lucky-wheels/${wheelId}/prizes`, data);
   }
 
-  async getLuckyWheelPrizes(wheelId: string, page = 1, limit = 10) {
+  async getLuckyWheelPrizes(wheelId: string, page = 1, limit = 50) {
     return this.get(`/lucky-wheels/${wheelId}/prizes?page=${page}&limit=${limit}`);
   }
 

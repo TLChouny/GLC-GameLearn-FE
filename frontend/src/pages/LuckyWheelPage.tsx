@@ -84,7 +84,7 @@ const LuckyWheelPage: React.FC = () => {
   // Load prizes for selected wheel
   const loadPrizes = async (wheelId: string) => {
     try {
-      const response = await luckyWheelService.getLuckyWheelPrizes(wheelId);
+      const response = await luckyWheelService.getLuckyWheelPrizes(wheelId, { page: 1, limit: 50 });
       if (response.success && response.data) {
         setPrizes(response.data.prizes);
       }
