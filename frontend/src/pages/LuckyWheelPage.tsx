@@ -29,6 +29,9 @@ const LuckyWheelPage: React.FC = () => {
   const [totalSpinsCap, setTotalSpinsCap] = useState<number>(0);
   const pendingSpinDataRef = useRef<SpinResult | null>(null);
   const [showHistory, setShowHistory] = useState<boolean>(false);
+  const [historyPage, setHistoryPage] = useState<number>(1);
+  const [hasMoreHistory, setHasMoreHistory] = useState<boolean>(true);
+  const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(false);
 
   // Legend segments mặc định (nếu chưa có prize từ API)
   const segments = React.useMemo<WheelSegment[]>(() => [
@@ -99,7 +102,7 @@ const LuckyWheelPage: React.FC = () => {
       const [statsRes, infoRes, historyRes] = await Promise.all([
         luckyWheelService.getUserSpinStatsByWheel(wheelId),
         luckyWheelService.getWheelInfo(wheelId),
-        luckyWheelService.getUserSpinHistoryByWheel(wheelId, { page: 1, limit: 10 })
+        luckyWheelService.getUserSpinHistoryByWheel(wheelId, { page: 1, limit: 100 }) // Tăng limit để lấy nhiều lịch sử hơn
       ]);
 
       if (statsRes.success && statsRes.data) {
@@ -117,9 +120,35 @@ const LuckyWheelPage: React.FC = () => {
 
       if (historyRes.success && historyRes.data) {
         setHistory(historyRes.data.spinHistory);
+        setHistoryPage(1);
+        setHasMoreHistory(historyRes.data.pagination.hasNext);
       }
     } catch {
       // ignore
+    }
+  };
+
+  // Load more history
+  const loadMoreHistory = async () => {
+    if (!selectedWheel || isLoadingHistory || !hasMoreHistory) return;
+    
+    try {
+      setIsLoadingHistory(true);
+      const nextPage = historyPage + 1;
+      const response = await luckyWheelService.getUserSpinHistoryByWheel(selectedWheel._id, { 
+        page: nextPage, 
+        limit: 50 
+      });
+      
+      if (response.success && response.data) {
+        setHistory(prev => [...prev, ...response.data!.spinHistory]);
+        setHistoryPage(nextPage);
+        setHasMoreHistory(response.data!.pagination.hasNext);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setIsLoadingHistory(false);
     }
   };
 
@@ -157,6 +186,9 @@ const LuckyWheelPage: React.FC = () => {
   const handleWheelSelect = async (wheel: LuckyWheel) => {
     setSelectedWheel(wheel);
     setTotalSpinsCap(wheel.maxSpinPerDay);
+    setHistory([]); // Reset history khi chuyển wheel
+    setHistoryPage(1);
+    setHasMoreHistory(true);
     await loadPrizes(wheel._id);
     await loadStatsAndHistory(wheel._id);
     setSpinResult(null);
@@ -285,7 +317,7 @@ const LuckyWheelPage: React.FC = () => {
                 <div className="flex items-center justify-between sm:mb-4">
                   <h3 className="hidden sm:flex text-lg sm:text-xl font-bold text-primary items-center">
                     <span className="text-xl sm:text-2xl mr-2 sm:mr-3">🕒</span>
-                    Lịch sử quay gần đây
+                    Lịch sử quay ({history.length})
                   </h3>
                   {/* Toggle button (mobile) */}
                   <button
@@ -295,7 +327,7 @@ const LuckyWheelPage: React.FC = () => {
                   >
                     <span className="flex items-center">
                       <span className="mr-2">🕒</span>
-                      <span className="font-semibold">Lịch sử quay gần đây</span>
+                      <span className="font-semibold">Lịch sử quay ({history.length})</span>
                     </span>
                     <span
                       className={`${showHistory ? 'rotate-180' : 'rotate-0'} transition-transform duration-200`}
@@ -304,23 +336,57 @@ const LuckyWheelPage: React.FC = () => {
                   </button>
                 </div>
                 {/* Desktop label below to align spacing */}
-                <div className="hidden sm:block mb-2 text-sm text-foreground/70">Những lượt quay mới nhất của bạn</div>
+                <div className="hidden sm:block mb-2 text-sm text-foreground/70">Tất cả lượt quay của bạn</div>
 
                 {/* Collapsible content on mobile; always visible on >= sm */}
-                <div className={`sm:block overflow-hidden ${showHistory ? 'max-h-[480px]' : 'max-h-0'} sm:max-h-none transition-[max-height] duration-300 ease-in-out`}>
-                  <div className="space-y-2 sm:space-y-3">
+                <div className={`sm:block overflow-hidden ${showHistory ? 'max-h-[600px]' : 'max-h-0'} sm:max-h-[500px] transition-[max-height] duration-300 ease-in-out`}>
+                  <div className="space-y-2 sm:space-y-3 max-h-[580px] sm:max-h-[480px] overflow-y-auto pr-2">
                     {history.length === 0 && (
-                      <div className="text-sm text-foreground">Chưa có lượt quay nào</div>
+                      <div className="text-sm text-foreground text-center py-4">Chưa có lượt quay nào</div>
                     )}
-                    {history.map(h => (
-                      <div key={h._id} className="flex items-center justify-between text-xs sm:text-sm p-2 sm:p-3 rounded-lg border bg-white/70 backdrop-blur">
-                        <div className="flex-1">
-                          <div className="font-semibold text-foreground">{h.spinResult}</div>
-                          <div className="opacity-70">{new Date(h.createdAt).toLocaleString()}</div>
+                    {history.map((h, index) => (
+                      <div key={h._id} className="flex items-center justify-between text-xs sm:text-sm p-2 sm:p-3 rounded-lg border bg-white/70 backdrop-blur hover:bg-white/90 transition-colors">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-foreground truncate">{h.spinResult}</div>
+                          <div className="opacity-70 text-xs">
+                            {new Date(h.createdAt).toLocaleString('vi-VN', {
+                              day: '2-digit',
+                              month: '2-digit', 
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </div>
                         </div>
-                        <div className="ml-3 text-primary text-base sm:text-lg">🎁</div>
+                        <div className="ml-3 flex items-center">
+                          <span className="text-xs text-gray-500 mr-2">#{history.length - index}</span>
+                          <div className="text-primary text-base sm:text-lg">🎁</div>
+                        </div>
                       </div>
                     ))}
+                    
+                    {/* Load More Button */}
+                    {hasMoreHistory && (
+                      <div className="text-center pt-3">
+                        <Button3D
+                          variant="secondary"
+                          onClick={isLoadingHistory ? undefined : loadMoreHistory}
+                          className={`text-xs sm:text-sm px-4 py-2 ${isLoadingHistory ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          {isLoadingHistory ? (
+                            <>
+                              <span className="animate-spin mr-2">⏳</span>
+                              Đang tải...
+                            </>
+                          ) : (
+                            <>
+                              <span className="mr-2">📜</span>
+                              Xem thêm lịch sử
+                            </>
+                          )}
+                        </Button3D>
+                      </div>
+                    )}
                   </div>
                 </div>
               </AnimatedCard>
